@@ -1,0 +1,56 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/demo?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&allowMultiQueries=true&rewriteBatchedStatements=true&connectTimeout=60000&socketTimeout=60000
+    username: root
+    password: root
+    #    filters: config
+    #    connect-properties:
+    #      config.decrypt: true
+    #      config.decrypt.key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIat047MCpCc3jugF9YmdgTOnG5vq8MSUSAmtdjIGKmoPNVfgt3+FPQAbx5bbp6e2mitFA5tBEyhPDMWCTy0cTMCAwEAAQ==
+    druid:
+      initial-size: 3     #初始化时建立物理连接的个数，默认 0
+      min-idle: 3         # 回收连接时，保证最小空闲数目的连接，默认 0
+      max-active: 10      # 连接池中最多支持的活动会话，默认 8
+      max-wait: 60000     # 默认 -1 ，程序向连接池中请求连接时，等待的最大时间，超过等待时间则抛异常，单位毫秒
+      time-between-eviction-runs-millis: 60000 # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，默认 60000
+      min-evictable-idle-time-millis: 300000 # 连接空闲的最小时间，单位毫秒，默认 600000
+      max-eviction-interval-millis: 900000 # 连接在池中最大生存的时间，单位毫秒，默认 1800000
+      validation-query: SELECT 1  # 用来检测连接是否有效的 SQL。如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会起作用。
+      testWhileIdle: true # 应用向连接池申请连接，并且testOnBorrow为false时，连接池将会判断连接是否处于空闲状态，如果是，则验证这条连接是否可用
+      testOnBorrow: false # 默认是false，如果为true，应用向连接池申请连接时，连接池会判断这条连接是否是可用的
+      testOnReturn: false # 默认是false，如果为true，当应用使用完连接，连接池回收连接的时候会判断该连接是否还可用
+      poolPreparedStatements: true # 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle
+      # 要启用PSCache，必须配置大于0，当大于0时， poolPreparedStatements自动触发修改为true，
+      # 在Druid中，不会存在Oracle下PSCache占用内存过多的问题，
+      # 可以把这个数值配置大一些，比如说100
+      maxOpenPreparedStatements: 20
+      # 连接池中的minIdle数量以内的连接，空闲时间超过minEvictableIdleTimeMillis，则会执行keepAlive操作
+      keepAlive: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # Spring 监控，利用aop 对指定接口的执行时间，jdbc数进行记录
+      aop-patterns: "com.springboot.template.dao.*"
+      ########### 启用内置过滤器（第一个 stat必须，否则监控不到SQL）
+      filters: stat,wall
+      filter: # 过滤器配置
+        stat: # SQL统计过滤器配置
+          enabled: true # 启用SQL统计过滤器
+          log-slow-sql: true # 开启慢sql监控，超过2s 就认为是慢sql，记录到日志中
+          slow-sql-millis: 2000 # 慢SQL的执行时间阈值（单位：毫秒）
+      web-stat-filter: # Druid Web统计过滤器配置
+        enabled: true # 启用Web统计过滤器
+        url-pattern: /*                 # 过滤所有url
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" # 排除一些不必要的url
+        session-stat-enable: true # 开启 session 统计功能
+        session-stat-max-count: 1000 # session的最大个数,默认100
+      stat-view-servlet:          # Druid监控页面配置
+        enabled: true
+        login-username: admin     #配置监控页面访问登录名称
+        login-password: admin
+        url-pattern: /druid/*     # 访问内置监控页面的路径，内置监控页面的首页是/druid/index.html
+        allow: 127.0.0.1           # 允许访问的地址，如果allow没有配置或者为空，则允许所有访问
+
+
+
+

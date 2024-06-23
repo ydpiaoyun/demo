@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: demo
+  profiles:
+    active: h2
+  lifecycle:
+    timeout-per-shutdown-phase: 10s
+  servlet:
+    multipart:
+      max-file-size: 10MB #限制单个文件大小
+      max-request-size: 50MB #限制单次请求所能上传文件的总文件大小
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    locale: zh_CN
+    time-zone: GMT+8
+    default-property-inclusion: NON_NULL
+
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+# Spring Boot 2.3 配置优雅停止
+# 开启优雅停止 Web 容器，默认为 IMMEDIATE：立即停止
+server:
+  shutdown: graceful
+
+#  mybatis 日志, 由 logback 接管日志
+mybatis-plus:
+  # 实体类包,配置后 xml 中可以不写全路径类名，写简化名即可
+  type-aliases-package: com.yun.demo.entity
+  # 默认xml位置,以下为默认配置
+#  mapper-locations: "classpath*:/mapper/**/*.xml"
+  configuration:
+    map-underscore-to-camel-case: true  # 下滑线转驼峰
+    auto-mapping-behavior: full
+    #配置sql打印日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    cache-enabled: false    # 是否开启 二级缓存
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+  global-config:
+    db-config:
+      # 配置全局 id 策略为 数据库自增
+      id-type: auto
+      logic-delete-field: deleted # 逻辑删除属性名
+      logic-delete-value: 1 # 逻辑已删除值，默认 1
+      logic-not-delete-value: 0
+      update-strategy: not_null   # 更新策略,只更新非空字段
+
+#logging:
+#    level:
+#      com.yun.demo.mapper: debug
+
+management:
+  endpoints:
+    web:
+      exposure:
+#        include: shutdown
+        include: "*"
+      base-path: /management
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+  server:
+    port: 8888
